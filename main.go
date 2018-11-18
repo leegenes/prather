@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
+	"github.com/leegenes/prather/config"
 	"github.com/leegenes/prather/models"
 	"io/ioutil"
 	"log"
@@ -16,8 +17,12 @@ type Env struct {
 }
 
 func main() {
-	database, err := models.InitDb("postgres://user:pass@localhost/prather")
-
+	var dbConfig config.DbConfig
+	err := config.GetConfig(&dbConfig)
+	if err != nil {
+		return
+	}
+	database, err := models.InitDb(&dbConfig)
 	if err != nil {
 		log.Panic(err)
 	}

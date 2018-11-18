@@ -53,3 +53,4 @@ func CreateNote(db *sql.DB, note *Note) (*Note, error) {
 
 	return note, err
 }
+
