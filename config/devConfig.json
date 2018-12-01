@@ -1,0 +1,11 @@
+{
+	"DB_TYPE": "postgres",
+	"DB_NAME": "prather",
+	"DB_PORT": 123,
+	"DB_USER": "haugenlee",
+	"DB_PASS": "notneeded"
+}
+	
+	
+
+
