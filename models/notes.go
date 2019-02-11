@@ -54,3 +54,13 @@ func CreateNote(db *sql.DB, note *Note) (*Note, error) {
 	return note, err
 }
 
+
+func DeleteNote(db *sql.DB, id uuid.UUID) (error) {
+	_, err := db.Exec("DELETE FROM notes WHERE id = $1;", id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+

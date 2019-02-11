@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/leegenes/prather/models"
+	"github.com/satori/go.uuid"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -70,6 +71,26 @@ func (env *Env) NotesHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (env *Env) NoteHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodDelete {
+		vars := mux.Vars(r)
+		fmt.Println(vars["id"])
+		idint, uuidErr := uuid.FromString(vars["id"])
+		fmt.Println(idint)
+		if uuidErr != nil {
+			fmt.Println(uuidErr)
+			http.Error(w, http.StatusText(400), 400)
+		}
+
+		err := models.DeleteNote(env.db, idint)
+
+		if err != nil {
+			fmt.Println(err)
+			http.Error(w, http.StatusText(500), 500)
+			return
+		}
+
+		fmt.Fprintf(w, "%s", vars["id"])
+	}
 	fmt.Println("worked")
 }
 
