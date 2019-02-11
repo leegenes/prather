@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
-	"github.com/leegenes/prather/config"
 	"github.com/leegenes/prather/models"
+	"github.com/satori/go.uuid"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -17,12 +17,7 @@ type Env struct {
 }
 
 func main() {
-	var dbConfig config.DbConfig
-	err := config.GetConfig(&dbConfig)
-	if err != nil {
-		return
-	}
-	database, err := models.InitDb(&dbConfig)
+	database, err := models.InitDb("postgres://haugenlee:notneeded@localhost/prather")
 	if err != nil {
 		log.Panic(err)
 	}
@@ -76,6 +71,37 @@ func (env *Env) NotesHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (env *Env) NoteHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	fmt.Println(vars["id"])
+	idint, uuidErr := uuid.FromString(vars["id"])
+	fmt.Println(idint)
+	if uuidErr != nil {
+		fmt.Println(uuidErr)
+		http.Error(w, http.StatusText(400), 400)
+	}
+
+	if r.Method == http.MethodGet {
+		resp, err := models.GetNote(env.db, idint)
+		
+		if err != nil {
+			fmt.Println(err)
+			http.Error(w, http.StatusText(500), 500)
+		}
+
+		fmt.Fprintf(w, "%s, %s, %s\n", resp.Id, resp.Title, resp.Text)
+	}
+
+	if r.Method == http.MethodDelete {
+		err := models.DeleteNote(env.db, idint)
+
+		if err != nil {
+			fmt.Println(err)
+			http.Error(w, http.StatusText(500), 500)
+			return
+		}
+
+		fmt.Fprintf(w, "%s", vars["id"])
+	}
 	fmt.Println("worked")
 }
 

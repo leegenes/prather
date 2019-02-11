@@ -3,10 +3,9 @@ package models
 import (
 	"database/sql"
 	_ "github.com/lib/pq"
-	"github.com/leegenes/prather/config"
 )
 
-func InitDb(config *config.DbConfig) (*sql.DB, error) {
+func InitDb(config string) (*sql.DB, error) {
 	
 	database, err := sql.Open("postgres", "user=haugenlee dbname=prather sslmode=disable")
 
